@@ -80,6 +80,19 @@ p {
   gap: 10px;
 }
 
+.nav-group {
+  display: grid;
+  gap: 6px;
+}
+
+.nav-submenu {
+  display: grid;
+  gap: 4px;
+  margin-left: 10px;
+  padding-left: 10px;
+  border-left: 1px solid rgba(219, 247, 232, 0.25);
+}
+
 .nav-item {
   display: flex;
   align-items: center;
@@ -115,6 +128,12 @@ p {
   background: #d8fbe8;
   color: #103726;
   font-weight: 600;
+}
+
+.nav-subitem {
+  font-size: 0.92rem;
+  padding-top: 9px;
+  padding-bottom: 9px;
 }
 
 .side-nav.collapsed nav {

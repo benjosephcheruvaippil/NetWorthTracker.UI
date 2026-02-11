@@ -342,8 +342,21 @@ function AssetsPage({ assets, onAddAsset, onSaveAsset, onDeleteAsset }) {
   );
 }
 
+function SectionStubPage({ title, description }) {
+  return (
+    <section className="page">
+      <div className="panel">
+        <p className="eyebrow">Assets</p>
+        <h1>{title}</h1>
+        <p className="muted">{description}</p>
+      </div>
+    </section>
+  );
+}
+
 function AppLayout({ isNavOpen, setNavOpen, isNavCollapsed, setNavCollapsed }) {
   const location = useLocation();
+  const inAssetsSection = location.pathname.startsWith("/assets");
 
   useEffect(() => {
     setNavOpen(false);
@@ -374,9 +387,29 @@ function AppLayout({ isNavOpen, setNavOpen, isNavCollapsed, setNavCollapsed }) {
             <NavLink to="/" end className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}>
               Home
             </NavLink>
-            <NavLink to="/assets" className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}>
-              Assets
-            </NavLink>
+            <div className={`nav-group ${inAssetsSection ? "active" : ""}`}>
+              <NavLink
+                to="/assets"
+                end
+                className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
+              >
+                Assets
+              </NavLink>
+              <div className="nav-submenu">
+                <NavLink
+                  to="/assets/audit-log"
+                  className={({ isActive }) => `nav-item nav-subitem ${isActive ? "active" : ""}`}
+                >
+                  Asset Audit Log
+                </NavLink>
+                <NavLink
+                  to="/assets/reports"
+                  className={({ isActive }) => `nav-item nav-subitem ${isActive ? "active" : ""}`}
+                >
+                  Reports
+                </NavLink>
+              </div>
+            </div>
           </nav>
         ) : null}
       </aside>
@@ -430,6 +463,24 @@ export default function App() {
                 onAddAsset={addAsset}
                 onSaveAsset={saveAsset}
                 onDeleteAsset={deleteAsset}
+              />
+            }
+          />
+          <Route
+            path="assets/audit-log"
+            element={
+              <SectionStubPage
+                title="Asset Audit Log"
+                description="Track all add, update, and delete activity for portfolio assets."
+              />
+            }
+          />
+          <Route
+            path="assets/reports"
+            element={
+              <SectionStubPage
+                title="Reports"
+                description="Generate and review reports for your asset portfolio performance."
               />
             }
           />
