@@ -283,7 +283,7 @@ p {
 
 .table-tools {
   display: grid;
-  grid-template-columns: 2fr 1.2fr 1fr 1.2fr;
+  grid-template-columns: 2fr 1.2fr 1fr 132px;
   gap: 14px;
   align-items: center;
   margin-bottom: 10px;
@@ -291,7 +291,7 @@ p {
 
 .filter-anchor {
   grid-column: 4;
-  justify-self: flex-start;
+  justify-self: end;
   position: relative;
 }
 
@@ -344,7 +344,7 @@ p {
 .table-head,
 .table-row {
   display: grid;
-  grid-template-columns: 2fr 1.2fr 1fr 1.2fr;
+  grid-template-columns: 2fr 1.2fr 1fr 132px;
   gap: 14px;
   align-items: center;
   padding: 14px 0;
@@ -370,6 +370,7 @@ p {
   display: flex;
   gap: 8px;
   justify-content: flex-start;
+  white-space: nowrap;
 }
 
 .action-btn {
@@ -536,6 +537,8 @@ p {
     margin-top: 4px;
   }
 }
+
+
 
 
 
