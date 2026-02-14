@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   CartesianGrid,
   Line,
@@ -112,6 +112,7 @@ function AssetsPage({ assets, onAddAsset, onSaveAsset, onDeleteAsset }) {
   const [assetToDelete, setAssetToDelete] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [isFilterPanelOpen, setFilterPanelOpen] = useState(false);
+  const filterAnchorRef = useRef(null);
   const [draftFilter, setDraftFilter] = useState({
     name: "All",
     category: "All",
@@ -158,6 +159,26 @@ function AssetsPage({ assets, onAddAsset, onSaveAsset, onDeleteAsset }) {
       setCurrentPage(totalPages);
     }
   }, [currentPage, totalPages]);
+
+  useEffect(() => {
+    if (!isFilterPanelOpen) {
+      return undefined;
+    }
+
+    const handleClickOutside = (event) => {
+      if (filterAnchorRef.current && !filterAnchorRef.current.contains(event.target)) {
+        setFilterPanelOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, [isFilterPanelOpen]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -249,7 +270,7 @@ function AssetsPage({ assets, onAddAsset, onSaveAsset, onDeleteAsset }) {
 
       <div className="panel table-panel">
         <div className="table-tools">
-          <div className="filter-anchor">
+          <div className="filter-anchor" ref={filterAnchorRef}>
             <button
               type="button"
               className="btn-ghost filter-toggle"
@@ -645,5 +666,6 @@ export default function App() {
     </BrowserRouter>
   );
 }
+
 
 
