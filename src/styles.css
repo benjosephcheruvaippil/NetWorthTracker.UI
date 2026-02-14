@@ -282,12 +282,16 @@ p {
 }
 
 .table-tools {
-  display: flex;
-  justify-content: flex-end;
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 1fr 1.2fr;
+  gap: 14px;
+  align-items: center;
   margin-bottom: 10px;
 }
 
 .filter-anchor {
+  grid-column: 4;
+  justify-self: flex-start;
   position: relative;
 }
 
@@ -333,7 +337,7 @@ p {
 }
 
 .table-empty {
-  padding: 14px 6px;
+  padding: 14px 0;
   color: #486352;
 }
 
@@ -343,7 +347,7 @@ p {
   grid-template-columns: 2fr 1.2fr 1fr 1.2fr;
   gap: 14px;
   align-items: center;
-  padding: 14px 6px;
+  padding: 14px 0;
 }
 
 .table-head {
@@ -532,5 +536,6 @@ p {
     margin-top: 4px;
   }
 }
+
 
 
