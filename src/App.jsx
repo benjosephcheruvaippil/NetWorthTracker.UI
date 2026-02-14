@@ -342,6 +342,16 @@ function AssetsPage({ assets, onAddAsset, onSaveAsset, onDeleteAsset }) {
   );
 }
 
+function IncomeExpensePage() {
+
+    return (
+      <section className="page">
+        <h2>Income & Expense Page</h2>
+      </section>
+    );
+
+}
+
 function SectionStubPage({ title, description }) {
   return (
     <section className="page">
@@ -387,6 +397,21 @@ function AppLayout({ isNavOpen, setNavOpen, isNavCollapsed, setNavCollapsed }) {
             <NavLink to="/" end className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}>
               Home
             </NavLink>
+            <div className={`nav-group ${inAssetsSection ? "active" : ""}`}>
+              <NavLink to="/income-expense" end className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}>
+              Income & Expense
+              </NavLink>
+
+              <div className="nav-submenu">
+                <NavLink
+                  to="/income-expense/reports"
+                  className={({ isActive }) => `nav-item nav-subitem ${isActive ? "active" : ""}`}
+                >
+                  Reports
+                </NavLink>
+              </div>
+            </div>
+           
             <div className={`nav-group ${inAssetsSection ? "active" : ""}`}>
               <NavLink
                 to="/assets"
@@ -455,6 +480,16 @@ export default function App() {
         >
           <Route index element={<HomePage assets={assets} />} />
           <Route path="home" element={<HomePage assets={assets} />} />
+          <Route path="income-expense" element={<IncomeExpensePage />} />
+          <Route
+            path="income-expense/reports"
+            element={
+              <SectionStubPage
+                title="Reports"
+                description="Income & Expense reports to analyze your cash flow patterns and identify areas for optimization."
+              />
+            }
+          />
           <Route
             path="assets"
             element={
