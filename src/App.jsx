@@ -111,15 +111,47 @@ function AssetsPage({ assets, onAddAsset, onSaveAsset, onDeleteAsset }) {
   const [editingAssetId, setEditingAssetId] = useState(null);
   const [assetToDelete, setAssetToDelete] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isFilterPanelOpen, setFilterPanelOpen] = useState(false);
+  const [draftFilter, setDraftFilter] = useState({
+    name: "All",
+    category: "All",
+    value: "",
+  });
+  const [appliedFilter, setAppliedFilter] = useState({
+    name: "All",
+    category: "All",
+    value: "",
+  });
   const [formData, setFormData] = useState({
     name: "",
     category: "",
     value: "",
   });
 
-  const totalPages = Math.max(1, Math.ceil(assets.length / PAGE_SIZE));
+  const availableNames = useMemo(
+    () => ["All", ...new Set(assets.map((asset) => asset.name).filter(Boolean))],
+    [assets]
+  );
+
+  const availableCategories = useMemo(
+    () => ["All", ...new Set(assets.map((asset) => asset.category).filter(Boolean))],
+    [assets]
+  );
+
+  const filteredAssets = useMemo(() => {
+    const valueQuery = appliedFilter.value.trim();
+    return assets.filter((asset) => {
+      const matchesName = appliedFilter.name === "All" || asset.name === appliedFilter.name;
+      const matchesCategory =
+        appliedFilter.category === "All" || asset.category === appliedFilter.category;
+      const matchesValue = valueQuery.length === 0 || String(asset.value).includes(valueQuery);
+      return matchesName && matchesCategory && matchesValue;
+    });
+  }, [assets, appliedFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredAssets.length / PAGE_SIZE));
   const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const paginatedAssets = assets.slice(startIndex, startIndex + PAGE_SIZE);
+  const paginatedAssets = filteredAssets.slice(startIndex, startIndex + PAGE_SIZE);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -130,6 +162,23 @@ function AssetsPage({ assets, onAddAsset, onSaveAsset, onDeleteAsset }) {
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((previous) => ({ ...previous, [name]: value }));
+  };
+
+  const handleFilterChange = (event) => {
+    const { name, value } = event.target;
+    setDraftFilter((previous) => ({ ...previous, [name]: value }));
+  };
+
+  const applyFilter = () => {
+    setAppliedFilter(draftFilter);
+    setCurrentPage(1);
+  };
+
+  const resetFilter = () => {
+    const initialFilter = { name: "All", category: "All", value: "" };
+    setDraftFilter(initialFilter);
+    setAppliedFilter(initialFilter);
+    setCurrentPage(1);
   };
 
   const submitAsset = (event) => {
@@ -199,6 +248,75 @@ function AssetsPage({ assets, onAddAsset, onSaveAsset, onDeleteAsset }) {
       </div>
 
       <div className="panel table-panel">
+        <div className="table-tools">
+          <div className="filter-anchor">
+            <button
+              type="button"
+              className="btn-ghost filter-toggle"
+              onClick={() => setFilterPanelOpen((open) => !open)}
+              aria-expanded={isFilterPanelOpen}
+              aria-controls="assetsFilterPanel"
+            >
+              Filter
+            </button>
+
+            {isFilterPanelOpen ? (
+              <form
+                id="assetsFilterPanel"
+                className="filter-popover"
+                onSubmit={(event) => event.preventDefault()}
+              >
+                <label htmlFor="filterName">Name</label>
+                <select
+                  id="filterName"
+                  name="name"
+                  value={draftFilter.name}
+                  onChange={handleFilterChange}
+                >
+                  {availableNames.map((name) => (
+                    <option key={name} value={name}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
+
+                <label htmlFor="filterCategory">Category</label>
+                <select
+                  id="filterCategory"
+                  name="category"
+                  value={draftFilter.category}
+                  onChange={handleFilterChange}
+                >
+                  {availableCategories.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+
+                <label htmlFor="filterValue">Value</label>
+                <input
+                  id="filterValue"
+                  name="value"
+                  type="text"
+                  placeholder="Enter value"
+                  value={draftFilter.value}
+                  onChange={handleFilterChange}
+                />
+
+                <div className="filter-actions">
+                  <button type="button" className="btn-primary" onClick={applyFilter}>
+                    Apply
+                  </button>
+                  <button type="button" className="btn-ghost" onClick={resetFilter}>
+                    Reset
+                  </button>
+                </div>
+              </form>
+            ) : null}
+          </div>
+        </div>
+
         <div className="asset-table">
           <div className="table-head">
             <span>Asset Name</span>
@@ -229,6 +347,9 @@ function AssetsPage({ assets, onAddAsset, onSaveAsset, onDeleteAsset }) {
               </div>
             </div>
           ))}
+          {paginatedAssets.length === 0 ? (
+            <div className="table-empty">No assets match the current filters.</div>
+          ) : null}
         </div>
         <div className="pagination">
           <button
@@ -341,7 +462,6 @@ function AssetsPage({ assets, onAddAsset, onSaveAsset, onDeleteAsset }) {
     </section>
   );
 }
-
 function IncomeExpensePage() {
 
     return (
@@ -525,3 +645,5 @@ export default function App() {
     </BrowserRouter>
   );
 }
+
+
