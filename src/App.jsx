@@ -508,10 +508,29 @@ function SectionStubPage({ title, description }) {
 function AppLayout({ isNavOpen, setNavOpen, isNavCollapsed, setNavCollapsed }) {
   const location = useLocation();
   const inAssetsSection = location.pathname.startsWith("/assets");
+  const inIncomeExpenseSection = location.pathname.startsWith("/income-expense");
+  const [isIncomeExpenseExpanded, setIncomeExpenseExpanded] = useState(
+    inIncomeExpenseSection
+  );
+  const [isAssetsExpanded, setAssetsExpanded] = useState(
+    inAssetsSection
+  );
 
   useEffect(() => {
     setNavOpen(false);
   }, [location.pathname, setNavOpen]);
+
+  useEffect(() => {
+    if (inIncomeExpenseSection) {
+      setIncomeExpenseExpanded(true);
+    }
+  }, [inIncomeExpenseSection]);
+
+  useEffect(() => {
+    if (inAssetsSection) {
+      setAssetsExpanded(true);
+    }
+  }, [inAssetsSection]);
 
   return (
     <div className={`app-shell ${isNavCollapsed ? "collapsed" : ""}`}>
@@ -538,44 +557,79 @@ function AppLayout({ isNavOpen, setNavOpen, isNavCollapsed, setNavCollapsed }) {
             <NavLink to="/" end className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}>
               Home
             </NavLink>
-            <div className={`nav-group ${inAssetsSection ? "active" : ""}`}>
-              <NavLink to="/income-expense" end className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}>
-              Income & Expense
-              </NavLink>
+            <div
+              className="nav-group"
+            >
+              <button
+                type="button"
+                className="nav-item"
+                aria-expanded={isIncomeExpenseExpanded}
+                onClick={() => setIncomeExpenseExpanded((expanded) => !expanded)}
+              >
+                Income & Expense
+              </button>
 
-              <div className="nav-submenu">
-                <NavLink
-                  to="/income-expense/reports"
-                  className={({ isActive }) => `nav-item nav-subitem ${isActive ? "active" : ""}`}
-                >
-                  Reports
-                </NavLink>
-              </div>
+              {isIncomeExpenseExpanded ? (
+                <div className="nav-submenu">
+                  <NavLink
+                    to="/income-expense/reports"
+                    className={({ isActive }) => `nav-item nav-subitem ${isActive ? "active" : ""}`}
+                  >
+                    Reports
+                  </NavLink>
+                  <NavLink
+                    to="/income-expense/expense"
+                    className={({ isActive }) => `nav-item nav-subitem ${isActive ? "active" : ""}`}
+                  >
+                    Expense
+                  </NavLink>
+                  <NavLink
+                    to="/income-expense/income"
+                    className={({ isActive }) => `nav-item nav-subitem ${isActive ? "active" : ""}`}
+                  >
+                    Income
+                  </NavLink>
+                </div>
+              ) : null}
             </div>
-           
-            <div className={`nav-group ${inAssetsSection ? "active" : ""}`}>
-              <NavLink
-                to="/assets"
-                end
-                className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
+
+            <div
+              className="nav-group"
+            >
+              <button
+                type="button"
+                className="nav-item"
+                aria-expanded={isAssetsExpanded}
+                onClick={() => setAssetsExpanded((expanded) => !expanded)}
               >
                 Assets
-              </NavLink>
-              <div className="nav-submenu">
-                <NavLink
-                  to="/assets/audit-log"
-                  className={({ isActive }) => `nav-item nav-subitem ${isActive ? "active" : ""}`}
-                >
-                  Asset Audit Log
-                </NavLink>
-                <NavLink
-                  to="/assets/reports"
-                  className={({ isActive }) => `nav-item nav-subitem ${isActive ? "active" : ""}`}
-                >
-                  Reports
-                </NavLink>
-              </div>
+              </button>
+
+              {isAssetsExpanded ? (
+                <div className="nav-submenu">
+                  <NavLink
+                    to="/assets"
+                    end
+                    className={({ isActive }) => `nav-item nav-subitem ${isActive ? "active" : ""}`}
+                  >
+                    Assets
+                  </NavLink>
+                  <NavLink
+                    to="/assets/audit-log"
+                    className={({ isActive }) => `nav-item nav-subitem ${isActive ? "active" : ""}`}
+                  >
+                    Asset Audit Log
+                  </NavLink>
+                  <NavLink
+                    to="/assets/reports"
+                    className={({ isActive }) => `nav-item nav-subitem ${isActive ? "active" : ""}`}
+                  >
+                    Reports
+                  </NavLink>
+                </div>
+              ) : null}
             </div>
+
           </nav>
         ) : null}
       </aside>
@@ -632,6 +686,24 @@ export default function App() {
             }
           />
           <Route
+            path="income-expense/expense"
+            element={
+              <SectionStubPage
+                title="Expense"
+                description="Track and review expense entries to control spending and improve budgeting."
+              />
+            }
+          />
+          <Route
+            path="income-expense/income"
+            element={
+              <SectionStubPage
+                title="Income"
+                description="Track and review income entries to understand cash inflows and growth trends."
+              />
+            }
+          />
+          <Route
             path="assets"
             element={
               <AssetsPage
@@ -666,6 +738,4 @@ export default function App() {
     </BrowserRouter>
   );
 }
-
-
 
